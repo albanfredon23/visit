@@ -1,6 +1,6 @@
 import { C, T } from '../i18n.js';
 
-// The price sheet that closes the visit: three packages, aftercare, options and a contact button.
+// The price sheet that closes the visit: three packages, the permanent-job search and a contact button.
 export function createPricingSheet(el, { onContact, onAgain, onClose }) {
   const body = el.querySelector('#pricingBody');
 
@@ -16,7 +16,7 @@ export function createPricingSheet(el, { onContact, onAgain, onClose }) {
           <p class="offer__time">${o.time}</p>
           <ul>${o.items.map((x) => `<li>${x}</li>`).join('')}</ul>
         </li>`).join('')}</ol>` +
-      `<dl class="extras"><div><dt>${t.pMaint}</dt><dd>${c.maint}</dd></div><div><dt>${t.pOptions}</dt><dd>${c.options}</dd></div></dl>` +
+      `<p class="cdi"><span class="cdi__dot" aria-hidden="true"></span><strong>${t.pCdi}</strong> ${c.cdi}</p>` +
       `<p class="sheet__note">${t.pNote}</p>` +
       `<div class="sheet__actions">
         <button type="button" class="ghost" data-a="again">${t.pAgain}</button>

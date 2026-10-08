@@ -84,7 +84,8 @@ const ui = {
   act: document.getElementById('act'), actText: document.getElementById('actText'), actKey: document.getElementById('actKey'),
   crt: document.getElementById('crt'), bubble: document.getElementById('bubble'),
 };
-const anim = { swivel: 0, swivelTarget: 0, wave: 0, talk: 0, lookAtCam: 0, lookAtCamTarget: 0, lookT: 3 };
+// scripted: a scene (price sheet, contact) has turned Alban round; the idle behaviour leaves him alone
+const anim = { swivel: 0, swivelTarget: 0, wave: 0, talk: 0, lookAtCam: 0, lookAtCamTarget: 0, lookT: 3, scripted: false };
 let walkReturn = null; // pose to fly back to after looking at the board
 
 const screenUI = createScreenUI(ui.crt, gallery, {
@@ -102,7 +103,7 @@ async function enterScreen() {
   const from = state;
   setState('fly');
   walker.setEnabled(false); pricing.hide(); contact.hide(); hideBubble();
-  anim.swivelTarget = 0; anim.lookAtCamTarget = 0;
+  anim.swivelTarget = 0; anim.lookAtCamTarget = 0; anim.scripted = false;
   // swoop over Alban's shoulder and into the glass
   const via = from === 'walk' ? rig.cam.pos.clone().lerp(screenWorld, 0.55).add(V(0.25, 0.35, 0.6)) : V(0.5, 1.6, 0.9);
   await rig.fly(SHOTS.screen(), from === 'walk' ? 1.9 : 2.1, via);
@@ -125,7 +126,7 @@ async function leaveScreen() {
   R.setView(scene, camera);
   resize();
   await rig.fly({ pos: SHOTS.screen().pos.add(V(0, 0.05, 0.5)), look: screenWorld.clone(), fov: 46 }, 0.6);
-  anim.swivelTarget = -(Math.PI - 0.3); anim.lookAtCamTarget = 1; // Alban swivels round to face the visitor
+  anim.swivelTarget = -(Math.PI - 0.3); anim.lookAtCamTarget = 1; anim.scripted = true; // Alban swivels round to face the visitor
   await rig.fly(SHOTS.front(), 1.5, V(1.2, 1.55, 0.9));
   setState('pricing');
   anim.wave = 2.2; anim.talk = 1.6;
@@ -146,7 +147,7 @@ async function showContact() {
   if (walkReturn) { // came from the board: go and meet Alban first
     walkReturn = null;
     setState('fly');
-    anim.swivelTarget = -(Math.PI - 0.3); anim.lookAtCamTarget = 1;
+    anim.swivelTarget = -(Math.PI - 0.3); anim.lookAtCamTarget = 1; anim.scripted = true;
     await rig.fly(SHOTS.front(), 1.6, V(2.2, 1.7, 1.8));
   }
   setState('contact');
@@ -156,7 +157,7 @@ async function showContact() {
 
 async function resumeWalk() {
   pricing.hide(); contact.hide();
-  anim.swivelTarget = 0; anim.lookAtCamTarget = 0;
+  anim.swivelTarget = 0; anim.lookAtCamTarget = 0; anim.scripted = false;
   if (walkReturn) { setState('fly'); await rig.fly(walkReturn, 1.1); walkReturn = null; }
   walker.setFrom(rig.cam.pos, rig.cam.look);
   setState('walk');
@@ -310,6 +311,8 @@ boot.start.addEventListener('click', async () => {
   await rig.fly({ ...start, fov: 60 }, 2.2);
   setState('walk'); walker.setEnabled(true);
   canvas.style.cursor = coarse ? 'default' : 'grab';
+  // deep link from the resume's "buy" button: go straight to the price board
+  if (/^#(tarifs|prices)$/.test(location.hash)) { await wait(250); openBoard(); }
 });
 
 /* ---------- sound ---------- */
@@ -328,7 +331,7 @@ applyStaticText();
 function resize() {
   R.resize();
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
-  if (state === 'screen') gallery.setAspect(innerWidth / innerHeight);
+  if (state === 'screen') gallery.setAspect(innerWidth / innerHeight, true, innerWidth > 760);
   if (!rig.isMoving()) {
     if (state === 'contact' || (state === 'pricing' && !walkReturn)) rig.fly(SHOTS.front(), 0);
   }
@@ -351,7 +354,7 @@ function animate() {
 
   // Alban: types at his desk, turns to look at a visitor who comes close
   const near = Math.hypot(rig.cam.pos.x, rig.cam.pos.z - 0.14);
-  if (state === 'walk' || state === 'boot' || state === 'fly') {
+  if ((state === 'walk' || state === 'boot' || state === 'fly') && !anim.scripted) {
     anim.lookT -= dt;
     if (state === 'walk' && near < 2.6) anim.lookAtCamTarget = 1;
     else if (anim.lookT < 0) { anim.lookAtCamTarget = anim.lookAtCamTarget ? 0 : 1; anim.lookT = anim.lookAtCamTarget ? 2.6 : 4 + Math.random() * 3; }

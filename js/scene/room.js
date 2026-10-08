@@ -141,7 +141,8 @@ export function buildRoom(scene) {
 
   // ---------- sofa corner (right wall) ----------
   {
-    const sofa = new THREE.Group(); sofa.position.set(3.12, 0, 2.7); sofa.rotation.y = -Math.PI / 2; room.add(sofa);
+    // backrest against the wall, seat facing the coffee table and the room
+    const sofa = new THREE.Group(); sofa.position.set(3.12, 0, 2.7); sofa.rotation.y = Math.PI / 2; room.add(sofa);
     const fabric = new THREE.MeshPhysicalMaterial({ color: '#2f5d62', roughness: 0.9, sheen: 1, sheenColor: new THREE.Color('#9fd3c7'), sheenRoughness: 0.6 });
     add(sofa, rbox(1.9, 0.26, 0.86, 0.06), fabric, [0, 0.27, 0]);
     add(sofa, rbox(1.9, 0.5, 0.2, 0.08), fabric, [0, 0.62, 0.34], [0.12, 0, 0]);
@@ -208,6 +209,11 @@ export function buildRoom(scene) {
       g.fillStyle = 'rgba(244,234,216,0.7)'; g.font = '32px "Bricolage Grotesque", sans-serif'; g.fillText(o.items[0], 60, y + 62);
     });
     g.fillStyle = 'rgba(244,234,216,0.55)'; g.font = '28px "Bricolage Grotesque", sans-serif'; g.fillText(T().act.pricing + ' →', 60, h - 70);
+    // "open to a permanent job" badge, bottom right
+    g.font = '600 30px "Bricolage Grotesque", sans-serif';
+    const cdi = T().pCdi, cw = g.measureText(cdi).width;
+    g.fillStyle = '#4ade80'; g.beginPath(); g.arc(w - 60 - cw - 26, h - 54, 9, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#f4ead8'; g.fillText(cdi, w - 60 - cw, h - 72);
     boardTex.needsUpdate = true;
   }
   drawBoard();

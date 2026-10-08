@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BUILDERS } from './models.js';
+import { redrawSigns, view } from './kit.js';
 import { C, T } from '../i18n.js';
 
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
@@ -35,14 +36,17 @@ export function createGallery({ environment, reduceMotion }) {
   const items = ids.map((id) => {
     const m = BUILDERS[id]();
     m.id = id; m.group.visible = false; scene.add(m.group);
-    m.group.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    // see-through and glowing parts (glass, light planes) don't cast shadows
+    m.group.traverse((o) => { if (o.isMesh) { o.castShadow = !o.material.transparent; o.receiveShadow = true; } });
     return m;
   });
 
   let index = 0, outgoing = null, swap = 1;
+  let full = false, feedK = 1; // feedK: 1 = framed for the small monitor (sign in view), 0 = full window
   items[0].group.visible = true;
 
   // orbit state: the camera circles the current creation's framing, plus what the visitor drags
+  const aim = new THREE.Vector3();
   const orbit = { yaw: 0, pitch: 0, zoom: 1, idle: 0, auto: 0 };
   const frame = { target: items[0].frame.target.clone(), dist: items[0].frame.dist, pitch: items[0].frame.pitch, yaw: items[0].frame.yaw };
 
@@ -77,17 +81,22 @@ export function createGallery({ environment, reduceMotion }) {
     frame.dist += (f.dist - frame.dist) * a; frame.pitch += (f.pitch - frame.pitch) * a; frame.yaw += (f.yaw - frame.yaw) * a;
     orbit.idle += dt;
     if (orbit.idle > 2.5 && !reduceMotion) orbit.auto += dt * 0.22;
+    // the monitor shows the project's floating sign too: frame a little higher and wider there,
+    // and glide to the full-window framing (sign faded out) when the visitor dives into the screen
+    feedK += ((full ? 0 : 1) - feedK) * (1 - Math.exp(-dt * 4));
+    view.signAlpha = feedK;
     const yaw = frame.yaw + orbit.yaw + orbit.auto;
     const pitch = THREE.MathUtils.clamp(frame.pitch + orbit.pitch, 0.02, 1.25);
     // tall screens (phones) see less width: step back so the piece still fits;
     // wide screens step back a little too, to leave room for the file list and the info card
     const fit = camera.aspect < 1.2 ? Math.pow(1.2 / camera.aspect, 0.75) : camera.aspect > 1.4 ? 1.3 : 1;
-    const d = frame.dist * orbit.zoom * fit;
+    const d = frame.dist * orbit.zoom * fit * (1 + 0.32 * feedK);
+    aim.copy(frame.target); aim.y += 0.5 * feedK;
     camera.position.set(
-      frame.target.x + Math.sin(yaw) * Math.cos(pitch) * d,
-      frame.target.y + Math.sin(pitch) * d,
-      frame.target.z + Math.cos(yaw) * Math.cos(pitch) * d);
-    camera.lookAt(frame.target);
+      aim.x + Math.sin(yaw) * Math.cos(pitch) * d,
+      aim.y + Math.sin(pitch) * d,
+      aim.z + Math.cos(yaw) * Math.cos(pitch) * d);
+    camera.lookAt(aim);
   }
 
   // ---------- monitor feed: render target + a transparent title layer ----------
@@ -127,11 +136,16 @@ export function createGallery({ environment, reduceMotion }) {
     renderer.setRenderTarget(feedRT); renderer.render(scene, camera); renderer.setRenderTarget(prev);
   }
 
-  // portrait full screen: lift the picture so the piece sits above the info card
-  function setAspect(a) {
-    if (camera.aspect === a) return;
+  // isFull: the screen fills the window. Portrait: lift the picture so the piece sits above the info card;
+  // wide with the side card (panel): slide the picture left so the piece sits beside the card.
+  let aspectKey = '';
+  function setAspect(a, isFull = false, panel = false) {
+    full = isFull;
+    const key = `${a}|${isFull}|${panel}`;
+    if (key === aspectKey) return; aspectKey = key;
     camera.aspect = a;
-    if (a < 1) camera.setViewOffset(1000, 1000 / a, 0, (1000 / a) * 0.14, 1000, 1000 / a);
+    if (isFull && a < 1) camera.setViewOffset(1000, 1000 / a, 0, (1000 / a) * 0.14, 1000, 1000 / a);
+    else if (isFull && panel) camera.setViewOffset(1000 * a * 1.28, 1000, 1000 * a * 0.28, 0, 1000 * a, 1000);
     else camera.clearViewOffset();
     camera.updateProjectionMatrix();
   }
@@ -143,6 +157,6 @@ export function createGallery({ environment, reduceMotion }) {
     drag(dx, dy) { orbit.yaw -= dx * 0.008; orbit.pitch += dy * 0.005; orbit.pitch = THREE.MathUtils.clamp(orbit.pitch, -0.6, 0.8); orbit.idle = 0; },
     zoom(f) { orbit.zoom = THREE.MathUtils.clamp(orbit.zoom * f, 0.6, 1.5); orbit.idle = 0; },
     resetCycle() { cycle = 0; },
-    invalidateOverlay() { overlayFor = ''; },
+    invalidateOverlay() { overlayFor = ''; redrawSigns(); },
   };
 }

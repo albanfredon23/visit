@@ -1,8 +1,7 @@
-import { C, T, getLang } from '../i18n.js';
-import { SWATCHES } from '../data/content.js';
+import { C, T } from '../i18n.js';
 
 // Teletext-style overlay on the CRT while the visitor browses the creations:
-// title band, file list, the current creation's card and the prev / next / exit bar.
+// title band, file list, the current project's card (with a link to its site) and the prev / next / exit bar.
 export function createScreenUI(root, gallery, { onExit, onPricing, onType = () => {} }) {
   const el = {
     band: root.querySelector('#galBand'), menu: root.querySelector('#galMenu'), info: root.querySelector('#galInfo'),
@@ -10,7 +9,6 @@ export function createScreenUI(root, gallery, { onExit, onPricing, onType = () =
     view: root.querySelector('#galView'),
   };
   const coarse = matchMedia('(pointer: coarse)').matches;
-  let swatch = SWATCHES[0].id;
 
   function render() {
     const c = C(), t = T(), i = gallery.index(), cr = c.creations[i], n = c.creations.length;
@@ -18,14 +16,12 @@ export function createScreenUI(root, gallery, { onExit, onPricing, onType = () =
     el.menu.innerHTML = c.creations.map((x, k) =>
       `<li><button type="button" data-i="${k}" ${k === i ? 'aria-current="true"' : ''}><span class="k">${k + 1}</span>${x.title.toUpperCase()}</button></li>`).join('') +
       `<li><button type="button" data-i="p"><span class="k">${n + 1}</span>${t.pTitle.toUpperCase()}</button></li>`;
-    const sw = cr.id === 'chair'
-      ? `<div class="swatches" role="group" aria-label="${t.colour}">${SWATCHES.map((s) =>
-          `<button type="button" data-sw="${s.id}" style="--sw:${s.color}" aria-pressed="${s.id === swatch}" title="${s.name[getLang()]}"><span class="sr">${s.name[getLang()]}</span></button>`).join('')}</div>`
-      : '';
     el.info.innerHTML =
-      `<p class="info__tag"><span class="g">${t.offer} :</span> ${cr.tag}</p>` +
+      `<p class="info__tag"><img class="info__logo" src="assets/logos/${cr.id}.svg" alt="" width="28" height="28">${cr.tag}</p>` +
       `<h2 class="info__title">${cr.title}</h2>` +
-      `<p class="info__text">${cr.text}</p>${sw}` +
+      `<p class="info__text">${cr.text}</p>` +
+      `<p class="info__stack"><span class="g">${t.stack} :</span> ${cr.stack}</p>` +
+      `<a class="info__link" href="${cr.url}" target="_blank" rel="noopener">${cr.code ? t.code : t.site}</a>` +
       `<p class="info__hint">${coarse ? t.dragTouch : t.drag}</p>`;
     // replay the little "teletext page load" each time the creation changes
     el.info.classList.remove('is-in'); void el.info.offsetWidth; el.info.classList.add('is-in');
@@ -40,12 +36,6 @@ export function createScreenUI(root, gallery, { onExit, onPricing, onType = () =
   }
 
   el.menu.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) go(b.dataset.i); });
-  el.info.addEventListener('click', (e) => {
-    const b = e.target.closest('[data-sw]'); if (!b) return;
-    swatch = b.dataset.sw;
-    gallery.items.find((m) => m.id === 'chair').setColor(SWATCHES.find((s) => s.id === swatch).color);
-    el.info.querySelectorAll('[data-sw]').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.sw === swatch)));
-  });
   el.prev.addEventListener('click', () => prev());
   el.next.addEventListener('click', () => next());
   el.exit.addEventListener('click', () => onExit());
@@ -53,7 +43,7 @@ export function createScreenUI(root, gallery, { onExit, onPricing, onType = () =
   function next() { if (gallery.index() === C().creations.length - 1) return onPricing(); gallery.next(); render(); }
   function prev() { gallery.prev(); render(); }
 
-  // drag to turn the creation, wheel to zoom
+  // drag to turn the project's scene, wheel to zoom
   let drag = null;
   el.view.addEventListener('pointerdown', (e) => { drag = { id: e.pointerId, x: e.clientX, y: e.clientY }; el.view.setPointerCapture(e.pointerId); });
   el.view.addEventListener('pointermove', (e) => {
