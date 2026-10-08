@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alban Fredon · Visite 3D</title>
+<meta name="description" content="Visite 3D interactive des créations d'Alban Fredon, développeur de sites 3D, ingénieur IA et développeur full-stack. Tarifs et contact.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/visit.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<canvas id="scene" aria-label="Pièce en 3D où l'on peut marcher."></canvas>
+<div class="boot" id="boot" role="dialog" aria-modal="true" aria-labelledby="bootStart">
+  <pre class="boot__log" id="bootLog" aria-hidden="true"></pre>
+  <button class="boot__start" id="bootStart" type="button" hidden>CLIQUE POUR ENTRER</button>
+</div>
+
+<header class="lockup" id="lockup">
+  <h1>Alban Fredon</h1>
+  <p id="lockupText">Créations 3D · Ingénieur IA &amp; développeur full-stack</p>
+</header>
+<div class="topbar">
+  <button class="snd" id="btnSound" type="button" aria-pressed="true" aria-label="Son">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="snd__on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="snd__off" d="m17 9 5 6m0-6-5 6"/>
+    </svg>
+  </button>
+  <div class="lang" role="group" aria-label="Langue / Language">
+    <button type="button" data-lang="fr" lang="fr">FR</button>
+    <button type="button" data-lang="en" lang="en">EN</button>
+  </div>
+</div>
+
+<!-- walking HUD -->
+<div class="reticle" id="reticle" aria-hidden="true"></div>
+<button class="hint" id="hint" type="button" tabindex="-1"><span class="dot"></span><span id="hintText"></span></button>
+<button class="act" id="act" type="button" hidden><kbd id="actKey">E</kbd><span id="actText"></span></button>
+<div class="joy" id="joy" aria-hidden="true"><div class="joy__knob"></div></div>
+<p class="bubble" id="bubble" aria-live="polite"></p>
+
+<!-- the CRT: transparent glass, the creations are drawn by WebGL behind it -->
+<section class="crt" id="crt" aria-hidden="true">
+  <div class="crt__glass">
+    <div class="gal" id="gal">
+      <div class="gal__view" id="galView"></div>
+      <p class="gal__band" id="galBand"></p>
+      <ol class="gal__menu" id="galMenu"></ol>
+      <div class="gal__info" id="galInfo" aria-live="polite"></div>
+    </div>
+    <div class="crt__bar">
+      <button class="crt__btn" id="btnPrev" type="button"></button>
+      <button class="crt__btn" id="btnNext" type="button"></button>
+      <button class="crt__btn" id="btnExit" type="button"></button>
+    </div>
+  </div>
+</section>
+
+<aside class="sheet" id="pricing" aria-hidden="true" aria-labelledby="pricingTitle">
+  <div class="sheet__card" id="pricingBody"></div>
+</aside>
+
+<aside class="contact" id="contact" aria-hidden="true">
+  <h2 id="contactTitle">Merci de ta visite&nbsp;!</h2>
+  <p class="lede" id="contactLede"></p>
+  <ul id="contactList"></ul>
+  <div class="actions">
+    <button class="ghost" id="btnAgain" type="button"></button>
+    <button class="primary" id="btnWalk" type="button"></button>
+  </div>
+</aside>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

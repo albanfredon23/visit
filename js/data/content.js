@@ -1,0 +1,126 @@
+// All the visit's text, in French and English. Edit this file to change the creations, the prices or the contact.
+
+export const CONTACT = [
+  { icon: 'mail', label: { fr: 'Email', en: 'Email' }, value: 'albanfredon23@gmail.com', href: 'mailto:albanfredon23@gmail.com' },
+  { icon: 'tel', label: { fr: 'Téléphone', en: 'Phone' }, value: '+33 7 76 49 51 95', href: 'tel:+33776495195' },
+  { icon: 'gh', label: { fr: 'GitHub', en: 'GitHub' }, value: 'github.com/albanfredon23', href: 'https://github.com/albanfredon23' },
+  { icon: 'pin', label: { fr: 'Basé à', en: 'Based in' }, value: 'Limoges, France · remote EU / global' },
+];
+
+// Colours offered by the armchair configurator (creation "fauteuil").
+export const SWATCHES = [
+  { id: 'terracotta', color: '#c0573b', name: { fr: 'Terracotta', en: 'Terracotta' } },
+  { id: 'sauge', color: '#7f9a7a', name: { fr: 'Sauge', en: 'Sage' } },
+  { id: 'nuit', color: '#2f3d63', name: { fr: 'Bleu nuit', en: 'Midnight blue' } },
+  { id: 'moutarde', color: '#d9a441', name: { fr: 'Moutarde', en: 'Mustard' } },
+];
+
+export const I18N = {
+  fr: {
+    ui: {
+      start: 'CLIQUE POUR ENTRER', sound: 'Son',
+      lockup: 'Créations 3D · Ingénieur IA & développeur full-stack',
+      bios: ['ALBAN FREDON BIOS v7.1', 'Copyright (C) 2019-2026 Alban Fredon', '',
+        ['Processeur : neuro-symbolique, 7 ans d\'expérience', 'OK'], ['Carte graphique : WebGL', 'OK'],
+        ['Créations 3D trouvées : 6', 'OK'], ['Fiche tarifaire', 'OK'], ['Ouverture de la pièce', 'OK']],
+      hintDesk: 'ZQSD ou flèches pour marcher · glisse pour regarder · clique l’écran',
+      hintTouch: 'Joystick pour marcher · glisse pour regarder · touche l’écran',
+      act: { screen: 'Allumer l’écran', pricing: 'Voir mes tarifs', avatar: 'Dire bonjour' },
+      actKey: 'E', actTap: 'Toucher',
+      bubble: ['Salut ! Allume l’écran pour voir mes créations.', 'Tu peux te promener partout dans la pièce.', 'Mes tarifs sont affichés au mur, à droite.'],
+      canvas: 'Pièce en 3D où l’on peut marcher. Alban travaille à son bureau ; son écran montre ses créations 3D.',
+      // in-room monitor
+      feedTitle: 'CRÉATIONS 3D',
+      // screen gallery
+      galTitle: 'CRÉATIONS 3D', prev: '◀ PRÉC.', next: 'SUIV. ▶', toPricing: 'TARIFS ▶', exit: 'QUITTER ✕',
+      offer: 'Offre', drag: 'Glisse pour tourner · ← → : création suivante · Échap : quitter',
+      dragTouch: 'Glisse pour tourner l’objet', colour: 'Couleur',
+      // pricing sheet
+      pTitle: 'Mes tarifs', pLede: 'Un site 3D qui donne envie de rester, adapté à ton budget.',
+      ht: 'HT', pNote: 'Prix indicatifs, hors taxes. Chaque projet fait l’objet d’un devis gratuit et sur mesure.',
+      pMaint: 'Après la mise en ligne', pOptions: 'Options',
+      pContact: 'Me contacter', pAgain: 'Revoir les créations', pClose: 'Continuer la visite',
+      // contact
+      cTitle: 'Merci de ta visite !', cLede: 'Un site 3D, un système d’IA plus sobre ? Écris-moi ou appelle-moi.',
+      again: 'Revoir l’écran', walk: 'Continuer la visite',
+      // the little REPL on the monitor of the miniature room
+      hello: 'Bonjour, moi c\'est Alban',
+      pruned: '... 9 branches contradictoires élaguées', ctx: '... contexte -45% tokens', spoof: '... spoofing rejeté (mahalanobis)',
+    },
+    creations: [
+      { id: 'cv', title: 'Mon CV en 3D', tag: 'Expérience immersive',
+        text: 'Une pièce entière, un avatar qui tape au clavier et un terminal rétro pour lire le CV. Three.js, sans framework, bilingue.' },
+      { id: 'avatar', title: 'Avatar sur mesure', tag: 'Option modélisation',
+        text: 'Un personnage stylisé dessiné d’après une photo, animé : il tape, cligne des yeux, suit le visiteur du regard et salue.' },
+      { id: 'computer', title: 'Ordinateur rétro', tag: 'Hero 3D',
+        text: 'Un micro-ordinateur des années 80 modélisé pièce par pièce, avec un écran animé en temps réel.' },
+      { id: 'vase', title: 'Vase en porcelaine', tag: 'Hero 3D · démo artisan d’art',
+        text: 'Un objet précieux qu’on fait tourner sous tous les angles : idéal pour un artisan, une manufacture ou une marque.' },
+      { id: 'flat', title: 'Appartement témoin', tag: 'Vitrine 3D · démo immobilier',
+        text: 'Un logement en coupe qu’on visite avant même qu’il existe : pour un architecte, un promoteur ou une agence.' },
+      { id: 'chair', title: 'Configurateur produit', tag: 'Option configurateur',
+        text: 'Le client choisit la couleur et voit le produit changer en direct. Essaie les coloris ci-dessous.' },
+    ],
+    offers: [
+      { name: 'Hero 3D', price: '1 900 – 2 500 €', time: '3 à 5 jours',
+        items: ['Une page avec une scène 3D interactive', 'Votre produit, logo ou objet', 'Version mobile allégée, contact'] },
+      { name: 'Vitrine 3D', price: '4 500 – 6 500 €', time: '8 à 12 jours', star: 'Le plus demandé',
+        items: ['3 à 5 sections guidées par la 3D', 'Bilingue français / anglais', 'SEO de base, version sans 3D'] },
+      { name: 'Immersif', price: '9 000 – 15 000 €', time: '15 à 25 jours',
+        items: ['Un univers complet, comme cette visite', 'Personnage ou lieu modélisé', 'Parcours, sons et animations sur mesure'] },
+    ],
+    maint: 'Maintenance de 49 à 149 € par mois · hébergement et domaine de 15 à 25 € par mois',
+    options: 'Modélisation d’un objet 300 – 1 500 € · Configurateur dès 2 000 € · Langue en plus 300 – 500 €',
+  },
+  en: {
+    ui: {
+      start: 'CLICK TO ENTER', sound: 'Sound',
+      lockup: '3D work · AI engineer & full-stack developer',
+      bios: ['ALBAN FREDON BIOS v7.1', 'Copyright (C) 2019-2026 Alban Fredon', '',
+        ['CPU: neuro-symbolic, 7 years of experience', 'OK'], ['Graphics: WebGL', 'OK'],
+        ['3D creations found: 6', 'OK'], ['Price sheet', 'OK'], ['Opening the room', 'OK']],
+      hintDesk: 'WASD or arrows to walk · drag to look · click the screen',
+      hintTouch: 'Joystick to walk · drag to look · tap the screen',
+      act: { screen: 'Turn on the screen', pricing: 'See my prices', avatar: 'Say hello' },
+      actKey: 'E', actTap: 'Tap',
+      bubble: ['Hi! Turn on the screen to see my work.', 'Feel free to walk around the room.', 'My prices are on the wall, to the right.'],
+      canvas: 'A 3D room you can walk around. Alban works at his desk; his screen shows his 3D creations.',
+      feedTitle: '3D CREATIONS',
+      galTitle: '3D CREATIONS', prev: '◀ PREV', next: 'NEXT ▶', toPricing: 'PRICES ▶', exit: 'EXIT ✕',
+      offer: 'Package', drag: 'Drag to rotate · ← → : next creation · Esc: exit',
+      dragTouch: 'Drag to rotate the object', colour: 'Colour',
+      pTitle: 'My prices', pLede: 'A 3D website people want to stay on, sized to your budget.',
+      ht: 'excl. VAT', pNote: 'Indicative prices, excluding tax. Every project gets a free, tailored quote.',
+      pMaint: 'After launch', pOptions: 'Options',
+      pContact: 'Contact me', pAgain: 'See the creations again', pClose: 'Keep exploring',
+      cTitle: 'Thanks for visiting!', cLede: 'A 3D website, a leaner AI system? Write to me or give me a call.',
+      again: 'Back to the screen', walk: 'Keep exploring',
+      hello: 'Hi, I\'m Alban',
+      pruned: '... 9 contradictory branches pruned', ctx: '... context -45% tokens', spoof: '... spoofing rejected (mahalanobis)',
+    },
+    creations: [
+      { id: 'cv', title: 'My 3D resume', tag: 'Immersive experience',
+        text: 'A whole room, an avatar typing away and a retro terminal to read the resume. Three.js, no framework, bilingual.' },
+      { id: 'avatar', title: 'Custom avatar', tag: 'Modelling add-on',
+        text: 'A stylised character drawn from a photo and animated: it types, blinks, follows the visitor with its eyes and waves.' },
+      { id: 'computer', title: 'Retro computer', tag: 'Hero 3D',
+        text: 'An 80s home computer modelled part by part, with a screen animated in real time.' },
+      { id: 'vase', title: 'Porcelain vase', tag: 'Hero 3D · craft demo',
+        text: 'A precious object you can turn from every angle: ideal for a craftsperson, a manufacturer or a brand.' },
+      { id: 'flat', title: 'Show flat', tag: '3D Showcase · real estate demo',
+        text: 'A cutaway home you can visit before it is even built: for an architect, a developer or an agency.' },
+      { id: 'chair', title: 'Product configurator', tag: 'Configurator add-on',
+        text: 'Customers pick a colour and watch the product change live. Try the colours below.' },
+    ],
+    offers: [
+      { name: 'Hero 3D', price: '€1,900 – 2,500', time: '3 to 5 days',
+        items: ['One page with an interactive 3D scene', 'Your product, logo or object', 'Light mobile version, contact'] },
+      { name: '3D Showcase', price: '€4,500 – 6,500', time: '8 to 12 days', star: 'Most popular',
+        items: ['3 to 5 sections guided by 3D', 'Bilingual French / English', 'Basic SEO, no-3D fallback'] },
+      { name: 'Immersive', price: '€9,000 – 15,000', time: '15 to 25 days',
+        items: ['A complete world, like this visit', 'Modelled character or place', 'Custom path, sound and animation'] },
+    ],
+    maint: 'Maintenance €49 to €149 a month · hosting and domain €15 to €25 a month',
+    options: 'Object modelling €300 – 1,500 · Configurator from €2,000 · Extra language €300 – 500',
+  },
+};

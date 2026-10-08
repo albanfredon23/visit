@@ -1,0 +1,177 @@
+/* =========================================================
+   Visit-specific UI: walking HUD, CRT gallery, price sheet,
+   3D entrances for the cards. Base tokens live in style.css.
+   ========================================================= */
+
+/* ---------- what shows in which state ---------- */
+.reticle, .act, .joy, .hint { transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out); }
+body:not([data-state="walk"]) .reticle,
+body:not([data-state="walk"]) .act,
+body:not([data-state="walk"]) .joy,
+body:not([data-state="walk"]) .hint { opacity: 0; pointer-events: none; }
+body:not([data-state="walk"]):not([data-state="boot"]) .lockup { opacity: 0; transform: translateY(-6px); }
+body[data-state="screen"] .topbar .snd { opacity: 0.85; }
+
+/* ---------- walking HUD ---------- */
+.hint { cursor: default; font-size: 14px; padding: 10px 16px; max-width: calc(100vw - 32px); white-space: normal; text-align: center; line-height: 1.3; }
+.hint:active { transform: translateX(-50%); }
+.reticle { position: fixed; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; z-index: 4; pointer-events: none;
+  background: rgba(255, 245, 230, 0.85); box-shadow: 0 0 0 2px rgba(0,0,0,0.25); }
+.is-touch .reticle { display: none; }
+.act { position: fixed; z-index: 6; left: 50%; bottom: calc(max(28px, env(safe-area-inset-bottom)) + 58px);
+  transform: translateX(-50%); display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 8px; border-radius: 999px; cursor: pointer;
+  background: var(--card); color: var(--card-ink); border: 0; font: 600 15px/1 "Bricolage Grotesque", sans-serif;
+  box-shadow: 0 14px 34px -12px rgba(0,0,0,0.7); animation: act-in 360ms var(--ease-out); }
+.act[hidden] { display: none; }
+.act:hover { background: #fff; }
+.act:active { transform: translateX(-50%) scale(0.97); }
+.act kbd { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 8px; border-radius: 999px; background: #2a1d14; color: var(--card);
+  font: 600 13px/1 "Bricolage Grotesque", sans-serif; }
+@keyframes act-in { from { opacity: 0; transform: translateX(-50%) translateY(8px) perspective(400px) rotateX(-40deg); } }
+
+.joy { display: none; position: fixed; z-index: 6; left: max(22px, env(safe-area-inset-left)); bottom: calc(max(22px, env(safe-area-inset-bottom)) + 52px);
+  width: 124px; height: 124px; border-radius: 50%; touch-action: none;
+  background: radial-gradient(circle, rgba(255,240,220,0.08) 0 55%, rgba(255,240,220,0.16) 56% 100%);
+  border: 1px solid rgba(255, 220, 170, 0.28); backdrop-filter: blur(6px); }
+.is-touch .joy { display: block; }
+.joy__knob { position: absolute; left: 50%; top: 50%; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%;
+  background: var(--card); box-shadow: 0 6px 16px -4px rgba(0,0,0,0.6); transition: transform 160ms var(--ease-out); }
+.joy.is-active .joy__knob { transition: none; }
+.is-touch .act { bottom: calc(max(22px, env(safe-area-inset-bottom)) + 190px); }
+
+.bubble { position: fixed; left: 0; top: 0; z-index: 7; margin: 0; max-width: 240px; padding: 10px 14px; border-radius: 16px;
+  background: var(--card); color: var(--card-ink); font: 500 15px/1.35 "Bricolage Grotesque", sans-serif; pointer-events: none;
+  box-shadow: 0 16px 34px -14px rgba(0,0,0,0.7); opacity: 0; transition: opacity 220ms var(--ease-out); }
+.bubble.is-on { opacity: 1; }
+.bubble::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 14px; height: 14px; margin-left: -7px; background: var(--card); transform: rotate(45deg); border-radius: 2px; }
+
+/* ---------- CRT: transparent glass over the WebGL gallery ---------- */
+.crt { background: transparent; }
+.crt__glass { background: transparent;
+  box-shadow: 0 0 0 100vmax #000, inset 0 0 120px rgba(0,0,0,0.85), 0 0 0 10px #151515, 0 0 0 11px #2a2a2a; }
+.crt.is-off .crt__glass { animation: turnoff 420ms var(--ease-in-out) both; }
+@keyframes turnoff {
+  0% { transform: scale(1, 1); filter: brightness(1); }
+  55% { transform: scale(1, 0.004); filter: brightness(3); }
+  100% { transform: scale(0, 0.004); filter: brightness(4); }
+}
+.gal { position: absolute; inset: 0; z-index: 2; font-family: "VT323", monospace; color: var(--tt-white);
+  text-shadow: 0 0 2px currentColor, 0 0 9px color-mix(in srgb, currentColor 40%, transparent); }
+.gal__view { position: absolute; inset: 0; cursor: grab; touch-action: none; }
+.gal__view:active { cursor: grabbing; }
+.gal__band { position: absolute; top: clamp(14px, 3vw, 28px); left: clamp(14px, 4vw, 44px); right: calc(clamp(14px, 4vw, 44px) + 150px); margin: 0;
+  display: flex; justify-content: space-between; align-items: center; pointer-events: none;
+  background: var(--tt-blue); color: var(--tt-yellow); padding: 0 0.6ch; font-size: clamp(18px, 2.3vw, 26px); }
+.gal__band .dbl { display: inline-block; font-size: 2em; line-height: 1; transform: scaleX(0.62); transform-origin: left; }
+.band__count { color: var(--tt-white); }
+.gal__menu { position: absolute; left: clamp(14px, 4vw, 44px); top: calc(clamp(14px, 3vw, 28px) + 3.6em); margin: 0; padding: 0; list-style: none;
+  display: grid; gap: 2px; font-size: clamp(17px, 1.9vw, 24px); }
+.gal__menu button { all: unset; cursor: pointer; display: inline-flex; gap: 1.1ch; padding: 0 0.6ch; color: var(--tt-cyan); }
+.gal__menu button:hover, .gal__menu button[aria-current] { background: var(--tt-cyan); color: #000; text-shadow: none; }
+.gal__menu button:focus-visible { outline: 2px solid var(--tt-yellow); }
+.gal__menu .k { color: var(--tt-yellow); }
+.gal__menu button:hover .k, .gal__menu button[aria-current] .k { color: #000; }
+.gal__info { position: absolute; right: clamp(14px, 4vw, 44px); bottom: 70px; width: min(440px, 46%);
+  background: rgba(0, 0, 0, 0.62); border: 1px solid rgba(77, 255, 106, 0.25); padding: 14px 18px 12px; font-size: clamp(18px, 1.9vw, 23px); line-height: 1.15;
+  transform-origin: right bottom; }
+.gal__info.is-in { animation: page-in 520ms var(--ease-out) both; }
+@keyframes page-in { from { opacity: 0; transform: perspective(700px) rotateY(-24deg) translateX(24px); clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+.gal__info p { margin: 0; }
+.info__tag { color: var(--tt-white); } .info__tag .g { color: var(--tt-green); }
+.info__title { margin: 4px 0 6px; font: inherit; font-size: 1.7em; line-height: 1; color: var(--tt-yellow); }
+.info__text { color: var(--tt-white); }
+.info__hint { margin-top: 10px !important; color: var(--tt-green); font-size: 0.85em; }
+.swatches { display: flex; gap: 10px; margin-top: 12px; }
+.swatches button { appearance: none; width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.25); background: var(--sw); cursor: pointer;
+  transition: transform 140ms var(--ease-out), border-color 140ms ease; }
+.swatches button:hover { transform: scale(1.08); }
+.swatches button:active { transform: scale(0.94); }
+.swatches button[aria-pressed="true"] { border-color: var(--tt-yellow); box-shadow: 0 0 0 3px rgba(255,239,58,0.25); }
+.crt__btn { text-shadow: 0 0 6px rgba(77,255,106,0.5); }
+
+@media (max-width: 760px) {
+  .gal__menu { display: none; }
+  .gal__band { right: 12px; top: 64px; left: 12px; }
+  .gal__info { left: 12px; right: 12px; width: auto; bottom: 64px; padding: 10px 12px; font-size: 17px; }
+  .info__title { font-size: 1.5em; }
+  .crt { padding: 8px; }
+  .crt__glass { border-radius: 18px; }
+  .crt__bar { left: 12px; right: 12px; bottom: 12px; justify-content: space-between; }
+  .crt__btn { font-size: 17px; padding: 6px 9px; }
+}
+
+/* ---------- price sheet ---------- */
+.sheet { position: fixed; inset: 0; z-index: 30; overflow-y: auto; display: grid; place-items: center; padding: max(70px, env(safe-area-inset-top)) 16px 24px;
+  perspective: 1400px; background: radial-gradient(ellipse at 60% 40%, rgba(20, 14, 10, 0.25), rgba(10, 7, 5, 0.7));
+  opacity: 0; visibility: hidden; transition: opacity 300ms var(--ease-out), visibility 0s linear 300ms; }
+.sheet.is-on { opacity: 1; visibility: visible; transition: opacity 300ms var(--ease-out); }
+.sheet__card { width: min(1000px, 100%); background: var(--card); color: var(--card-ink); border-radius: 24px; padding: clamp(20px, 3.4vw, 36px);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.6) inset, 0 40px 90px -30px rgba(0,0,0,0.85);
+  transform: rotateX(22deg) translateY(80px) translateZ(-260px); transform-origin: 50% 100%; opacity: 0;
+  transition: transform 700ms var(--ease-out), opacity 400ms var(--ease-out); }
+.sheet.is-on .sheet__card { transform: none; opacity: 1; }
+.sheet__head h2 { margin: 0; font-size: clamp(28px, 4vw, 42px); letter-spacing: -0.025em; line-height: 1; }
+.sheet__head p { margin: 8px 0 0; color: var(--card-dim); font-size: 16px; }
+.offers { list-style: none; margin: 24px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; perspective: 1200px; }
+.offer { position: relative; border-radius: 18px; padding: 20px 18px 18px; background: #f3e8d5; border: 1px solid rgba(42,29,20,0.08);
+  transform: rotateY(-32deg) translateZ(-120px) translateX(30px); opacity: 0; transform-origin: 0 50%;
+  transition: transform 700ms var(--ease-out), opacity 400ms var(--ease-out); transition-delay: calc(var(--i) * 90ms + 200ms); }
+.sheet.is-on .offer { transform: none; opacity: 1; }
+.offer h3 { margin: 0; font-size: 20px; letter-spacing: -0.01em; }
+.offer__price { margin: 10px 0 0; font-size: clamp(22px, 2.4vw, 27px); font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.offer__price span { font-size: 13px; font-weight: 600; color: var(--card-dim); letter-spacing: 0.02em; }
+.offer__time { margin: 2px 0 12px; color: var(--card-dim); font-size: 14px; }
+.offer ul { margin: 0; padding: 12px 0 0; border-top: 1px solid rgba(42,29,20,0.12); list-style: none; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.35; }
+.offer li::before { content: "→ "; color: #c0573b; }
+.offer--star { background: #2a1d14; color: var(--card); }
+.offer--star .offer__time, .offer--star .offer__price span { color: #cdbba3; }
+.offer--star ul { border-color: rgba(255,247,234,0.16); }
+.offer--star li::before { color: var(--accent); }
+.offer__star { position: absolute; top: -11px; right: 16px; background: var(--accent); color: #2a1d14; font-size: 12px; font-weight: 700; letter-spacing: 0.02em;
+  padding: 5px 10px; border-radius: 999px; }
+.extras { margin: 18px 0 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.extras div { padding: 14px 16px; border-radius: 14px; background: rgba(42,29,20,0.05); }
+.extras dt { font-weight: 700; font-size: 14px; }
+.extras dd { margin: 4px 0 0; color: var(--card-dim); font-size: 14px; line-height: 1.4; }
+.sheet__note { margin: 14px 0 0; color: var(--card-dim); font-size: 13px; }
+.sheet__actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+.sheet__actions button { appearance: none; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer;
+  font: 600 15px "Bricolage Grotesque", sans-serif; transition: transform 120ms var(--ease-out), background 140ms ease; }
+.sheet__actions button:active { transform: scale(0.97); }
+.sheet__actions .primary { background: #2a1d14; color: var(--card); }
+.sheet__actions .primary:hover { background: #3d2b1e; }
+.sheet__actions .ghost { background: rgba(42,29,20,0.08); color: var(--card-ink); }
+.sheet__actions .ghost:hover { background: rgba(42,29,20,0.14); }
+@media (max-width: 760px) {
+  .sheet { place-items: start center; padding-top: max(72px, env(safe-area-inset-top)); }
+  .offers, .extras { grid-template-columns: 1fr; }
+  .offer { transform: rotateX(-28deg) translateY(30px); transform-origin: 50% 0; }
+  .sheet__actions { justify-content: stretch; }
+  .sheet__actions button { flex: 1 1 100%; }
+}
+
+/* ---------- contact card: swings in on its hinge ---------- */
+.contact { transform: translateY(-50%) perspective(900px) rotateY(-34deg) translateX(40px) translateZ(-80px); transform-origin: 0 50%;
+  transition: opacity 320ms var(--ease-out), transform 640ms var(--ease-out); }
+.contact.is-on { transform: translateY(-50%) perspective(900px) rotateY(0deg); }
+@media (max-width: 760px) {
+  .contact { transform: perspective(900px) rotateX(-30deg) translateY(40px); transform-origin: 50% 100%; }
+  .contact.is-on { transform: perspective(900px) rotateX(0deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheet__card, .offer, .contact, .gal__info.is-in, .act { transition: opacity 200ms linear !important; animation: none !important; transform: none !important; }
+  .contact { transform: translateY(-50%) !important; }
+  .crt.is-on .crt__glass, .crt.is-off .crt__glass { animation: none !important; }
+}
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) { .contact { transform: none !important; } }
+
+/* ---------- phones: keep the HUD clear of the joystick and the top bar ---------- */
+.lockup h1, .lockup p { text-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 2px 18px rgba(0,0,0,0.55); }
+@media (max-width: 760px) {
+  .lockup { max-width: calc(100vw - 210px); }
+  .lockup p { font-size: 12.5px; }
+}
+.is-touch .hint { left: auto; right: max(16px, env(safe-area-inset-right)); transform: none; max-width: calc(100vw - 190px);
+  bottom: calc(max(22px, env(safe-area-inset-bottom)) + 80px); font-size: 13px; }
+.is-touch .hint.is-hidden, .is-touch .hint:active { transform: none; }
