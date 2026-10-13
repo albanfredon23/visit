@@ -1,6 +1,6 @@
 import { C, T } from '../i18n.js';
 
-// The price sheet that closes the visit: three packages, the permanent-job search and a contact button.
+// The service sheet that closes the visit: three packages, the permanent-job search and a contact button.
 export function createPricingSheet(el, { onContact, onAgain, onClose }) {
   const body = el.querySelector('#pricingBody');
 
@@ -12,7 +12,7 @@ export function createPricingSheet(el, { onContact, onAgain, onClose }) {
         <li class="offer${o.star ? ' offer--star' : ''}" style="--i:${i}">
           ${o.star ? `<span class="offer__star">${o.star}</span>` : ''}
           <h3>${o.name}</h3>
-          <p class="offer__price">${o.price} <span>${t.ht}</span></p>
+          <p class="offer__price">${o.price}</p>
           <p class="offer__time">${o.time}</p>
           <ul>${o.items.map((x) => `<li>${x}</li>`).join('')}</ul>
         </li>`).join('')}</ol>` +

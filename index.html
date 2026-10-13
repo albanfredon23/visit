@@ -4,16 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Alban Fredon · Visite 3D</title>
-<meta name="description" content="Visite 3D interactive des créations d'Alban Fredon, développeur de sites 3D, ingénieur IA et développeur full-stack. Tarifs et contact.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&display=swap" rel="stylesheet">
+<meta name="description" content="Visite 3D interactive des créations d'Alban Fredon, développeur de sites 3D, ingénieur IA et développeur full-stack. Prestations et contact.">
+<link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/visit.css">
 <script type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  "three": "./vendor/three/three.module.min.js",
+  "three/addons/": "./vendor/three/addons/"
 } }
 </script>
 </head>
@@ -29,6 +27,7 @@
   <p id="lockupText">Créations 3D · Ingénieur IA &amp; développeur full-stack</p>
 </header>
 <div class="topbar">
+  <a class="legal" id="legalLink" href="legal.html" target="_blank" rel="noopener" aria-label="Mentions légales et confidentialité">Légal</a>
   <button class="snd" id="btnSound" type="button" aria-pressed="true" aria-label="Son">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M4 9v6h4l5 4V5L8 9H4Z"/><path class="snd__on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="snd__off" d="m17 9 5 6m0-6-5 6"/>
